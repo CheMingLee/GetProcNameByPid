@@ -1,0 +1,74 @@
+;
+; GetProcNameByPidKm.inf
+;
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
+ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determined by the Class
+Provider    = %ProviderString%
+DriverVer   = 10/22/2024,1.0.0.0
+CatalogFile = GetProcNameByPidKm.cat
+PnpLockdown = 1
+
+[SourceDisksFiles]
+GetProcNameByPidKm.sys = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[DestinationDirs]
+GetProcNameByPidKm.CopyDriverFiles = 12            ;%windir%\system32\drivers
+GetProcNameByPidKm.DelDriverFiles  = 12            ;%windir%\system32\drivers
+
+;
+; default install sections
+;
+
+[DefaultInstall.NT$ARCH$]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = GetProcNameByPidKm.CopyDriverFiles
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService          = %ServiceName%,,GetProcNameByPidKm.Service
+
+;
+; default uninstall sections
+;
+
+[DefaultUninstall.NT$ARCH$]
+LegacyUninstall = 1
+DelFiles        = GetProcNameByPidKm.DelDriverFiles
+
+[DefaultUninstall.NT$ARCH$.Services]
+DelService      = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; support sections
+;
+
+[GetProcNameByPidKm.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Activity Monitor"
+
+[GetProcNameByPidKm.CopyDriverFiles]
+%DriverName%.sys
+
+[GetProcNameByPidKm.DelDriverFiles]
+%DriverName%.sys
+
+;
+; String Section
+;
+
+[Strings]
+ProviderString          = "TODO-Set-Provider"
+ServiceDescription      = "GetProcNameByPidKm driver"
+ServiceName             = "GetProcNameByPidKm"
+DriverName              = "GetProcNameByPidKm"
+DiskId1                 = "GetProcNameByPidKm Device Installation Disk"
